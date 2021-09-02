@@ -37,8 +37,10 @@ static mut ROWS: [u64; 32] = [
 
 #[no_mangle]
 pub extern "C" fn clrText (scr: *mut u8) -> () {
+    let arr = unsafe { core::slice::from_raw_parts_mut(scr, 1000) };
+
     for i in 0..1000 {
-        unsafe { *(scr.offset(i)) = 0; }
+        arr[i] = 0;
     }
 }
 
