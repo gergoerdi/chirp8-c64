@@ -64,7 +64,7 @@ int main ()
     /* Create charset */
     for (uint8_t i = 0; i < 4; ++i)
     {
-        for (uint8_t j = 0; j < 0xf; ++j)
+        for (uint8_t j = 0; j <= 0xf; ++j)
         {
             *(font + (j << 3) + i) =
                 (j & 0x1 ? 0x0f : 0x00) |
@@ -74,7 +74,7 @@ int main ()
 
     for (uint8_t i = 4; i < 8; ++i)
     {
-        for (uint8_t j = 0; j < 0xf; ++j)
+        for (uint8_t j = 0; j <= 0xf; ++j)
         {
             *(font + (j << 3) + i) =
                 (j & 0x4 ? 0x0f : 0x00) |
