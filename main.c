@@ -45,29 +45,6 @@ int main ()
 
     clrText(scr);
     drawScreen(scr);
-
-/*     uint8_t* wpBase = scr + 2 * 40 + 4; */
-/*     for (uint8_t y = 0; y < 32; y += 2) */
-/*     { */
-/*         uint8_t* wp = wpBase; */
-
-/*         for (uint8_t j = 0; j < 8; ++j) */
-/*         { */
-/*             uint8_t b1 = ((uint8_t*)(rows))[(y + 0) * 8 + (7 - j)]; */
-/*             uint8_t b2 = ((uint8_t*)(rows))[(y + 1) * 8 + (7 - j)]; */
-
-/*             for (uint8_t k = 0; k < 4; ++k) */
-/*             { */
-/*                 uint8_t ch = ((b1 & 0xc0) >> 6) | ((b2 & 0xc0) >> 4); */
-/*                 b1 <<= 2; */
-/*                 b2 <<= 2; */
-/*                 *(wp++) = ch; */
-/*             } */
-/*         } */
-/* #endif */
-
-/*         wpBase = wpBase + 40; */
-/*     } */
     while (1) {}
 
     return 0;
