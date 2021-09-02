@@ -1,47 +1,8 @@
 #include <stdint.h>
 #include <stdio.h>
 
-uint64_t rows[] = {
-    0x0000000000000000,
-    0x0000000000000000,
-    0x0000000000000000,
-    0x0000000000000000,
-    0x0000000000000000,
-    0x0000000000000000,
-    0x0000000000000000,
-    0x0000000000000000,
-    0x0000000000000000,
-    0x0008bef3cfa21000,
-    0x0008884928321000,
-    0x000f88492e2a1000,
-    0x0008884928260000,
-    0x0008bef3cfa21000,
-    0x0000000000000000,
-    0x0000008e22800000,
-    0x0000008a3b800000,
-    0x000000ae39000000,
-    0x0000000000000000,
-    0x000f08a8befbc000,
-    0x000488ac88822000,
-    0x00048aaa88e3c000,
-    0x00048aa988828000,
-    0x000f252888fa4000,
-    0x0000000000000000,
-    0x0000000000000000,
-    0x0000000000000000,
-    0x0000000000000000,
-    0x0000000000000000,
-    0x0000000000000000,
-    0x0000000000000000,
-    0x0000000000000000,
-    0x0000000000000000
-};
-
-void clrText(uint8_t* scr)
-{
-    for (uint16_t i = 0; i < 1000; ++i)
-        *(scr++) = 0;
-}
+extern void clrText(uint8_t* scr);
+extern void drawScreen(uint8_t* scr);
 
 int main ()
 {
@@ -83,42 +44,30 @@ int main ()
     }
 
     clrText(scr);
+    drawScreen(scr);
 
-    uint8_t* wpBase = scr + 2 * 40 + 4;
-    for (uint8_t y = 0; y < 32; y += 2)
-    {
-        uint8_t* wp = wpBase;
+/*     uint8_t* wpBase = scr + 2 * 40 + 4; */
+/*     for (uint8_t y = 0; y < 32; y += 2) */
+/*     { */
+/*         uint8_t* wp = wpBase; */
 
-#if 0
-        uint64_t row1 = rows[y];
-        uint64_t row2 = rows[y+1];
+/*         for (uint8_t j = 0; j < 8; ++j) */
+/*         { */
+/*             uint8_t b1 = ((uint8_t*)(rows))[(y + 0) * 8 + (7 - j)]; */
+/*             uint8_t b2 = ((uint8_t*)(rows))[(y + 1) * 8 + (7 - j)]; */
 
-        for (uint8_t x = 0; x < 64; x += 2)
-        {
-            // Take top two bits of row1 and row2
-            uint8_t ch = (((row1 >> 62) << 2) & 0x0c) | ((row2 >> 62) & 0x03);
-            row1 <<= 2;
-            row2 <<= 2;
-            *(wp++) = ch;
-        }
-#else
-        for (uint8_t j = 0; j < 8; ++j)
-        {
-            uint8_t b1 = ((uint8_t*)(rows))[(y + 0) * 8 + (7 - j)];
-            uint8_t b2 = ((uint8_t*)(rows))[(y + 1) * 8 + (7 - j)];
+/*             for (uint8_t k = 0; k < 4; ++k) */
+/*             { */
+/*                 uint8_t ch = ((b1 & 0xc0) >> 6) | ((b2 & 0xc0) >> 4); */
+/*                 b1 <<= 2; */
+/*                 b2 <<= 2; */
+/*                 *(wp++) = ch; */
+/*             } */
+/*         } */
+/* #endif */
 
-            for (uint8_t k = 0; k < 4; ++k)
-            {
-                uint8_t ch = ((b1 & 0xc0) >> 6) | ((b2 & 0xc0) >> 4);
-                b1 <<= 2;
-                b2 <<= 2;
-                *(wp++) = ch;
-            }
-        }
-#endif
-
-        wpBase = wpBase + 40;
-    }
+/*         wpBase = wpBase + 40; */
+/*     } */
     while (1) {}
 
     return 0;
