@@ -37,6 +37,13 @@ uint8_t rows[][8] = {
     { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }
 };
 
+void clrText(uint8_t* scr)
+{
+    uint16_t i;
+    for (i = 0; i < 1000; ++i)
+        *(scr++) = 0;
+}
+
 int main ()
 {
     uint8_t* vicPtr = (uint8_t*)0xd018;
@@ -80,7 +87,9 @@ int main ()
         }
     }
 
-    wpBase = scr; // + 6 * 40;
+    clrText(scr);
+
+    wpBase = scr + 2 * 40 + 4;
 #if 1
     for (i = 0, scr = (uint8_t*)0x8400 + 6 * 40; i < 32; i += 2)
     {
