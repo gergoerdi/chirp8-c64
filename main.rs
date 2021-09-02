@@ -47,12 +47,12 @@ pub extern "C" fn clrText (scr: *mut u8) -> () {
 #[no_mangle]
 pub extern "C" fn drawScreen (scr: *mut u8) -> () {
     let mut base = unsafe{ scr.offset(2 * 40 + 4) };
-    for y in 0..16 { // TODO: this should be (0..32).step_by(2)
+    for y in (0..32).step_by(2) {
         let mut ptr = base;
-        let mut row1 = unsafe { ROWS[y * 2] };
-        let mut row2 = unsafe { ROWS[y * 2 + 1] };
+        let mut row1 = unsafe { ROWS[y] };
+        let mut row2 = unsafe { ROWS[y + 1] };
 
-        for x in 0..32 { // TODO: this should be (0..64).step_by(2)
+        for x in (0..64).step_by(2) {
             // Take top two bits of row1 and row2
             let ch : u8 = (((row1 >> 62) << 2) | (row2 >> 62)) as u8;
             row1 <<= 2;
