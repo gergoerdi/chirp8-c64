@@ -39,24 +39,19 @@ uint8_t rows[][8] = {
 
 void clrText(uint8_t* scr)
 {
-    uint16_t i;
-    for (i = 0; i < 1000; ++i)
+    for (uint16_t i = 0; i < 1000; ++i)
         *(scr++) = 0;
 }
 
 int main ()
 {
-    uint8_t* vicPtr = (uint8_t*)0xd018;
-    uint8_t* scr = (uint8_t*)0x8400;
-    uint8_t* krnlScr = (uint8_t*)0x0288;
-    uint8_t* font = (uint8_t*)0x8000;
+    uint8_t* const vicPtr = (uint8_t*)0xd018;
+    uint8_t* const scr = (uint8_t*)0x8400;
+    uint8_t* const krnlScr = (uint8_t*)0x0288;
+    uint8_t* const font = (uint8_t*)0x8000;
 
-    uint8_t i, j, k;
-
-    uint8_t* cia2aDDR = (uint8_t*)0xdd02;
-    uint8_t* cia2aDR = (uint8_t*)0xdd00;
-
-    uint8_t *wp, *wpBase;
+    uint8_t* const cia2aDDR = (uint8_t*)0xdd02;
+    uint8_t* const cia2aDR = (uint8_t*)0xdd00;
 
     /* Use 0x4000..0x7FFF for VIC graphics */
     *cia2aDDR |= 0x3;
@@ -67,9 +62,9 @@ int main ()
     *vicPtr = (*vicPtr & 0xf0) | 0x0 | (*vicPtr & 0x01);
 
     /* Create charset */
-    for (i = 0; i < 4; ++i)
+    for (uint8_t i = 0; i < 4; ++i)
     {
-        for (j = 0; j < 0xf; ++j)
+        for (uint8_t j = 0; j < 0xf; ++j)
         {
             *(font + (j << 3) + i) =
                 (j & 0x1 ? 0x0f : 0x00) |
@@ -77,9 +72,9 @@ int main ()
         }
     }
 
-    for (i = 4; i < 8; ++i)
+    for (uint8_t i = 4; i < 8; ++i)
     {
-        for (j = 0; j < 0xf; ++j)
+        for (uint8_t j = 0; j < 0xf; ++j)
         {
             *(font + (j << 3) + i) =
                 (j & 0x4 ? 0x0f : 0x00) |
@@ -89,17 +84,16 @@ int main ()
 
     clrText(scr);
 
-    wpBase = scr + 2 * 40 + 4;
-#if 1
-    for (i = 0, scr = (uint8_t*)0x8400 + 6 * 40; i < 32; i += 2)
+    uint8_t* wpBase = scr + 2 * 40 + 4;
+    for (uint8_t i = 0; i < 32; i += 2)
     {
-        wp = wpBase;
-        for (j = 0; j < 8; ++j)
+        uint8_t* wp = wpBase;
+        for (uint8_t j = 0; j < 8; ++j)
         {
             uint8_t b1 = rows[i][j];
             uint8_t b2 = rows[i + 1][j];
 
-            for (k = 0; k < 4; ++k)
+            for (uint8_t k = 0; k < 4; ++k)
             {
                 uint8_t ch = ((b1 & 0xc0) >> 6) | ((b2 & 0xc0) >> 4);
                 b1 <<= 2;
@@ -109,24 +103,6 @@ int main ()
         }
         wpBase = wpBase + 40;
     }
-#else
-    for (i = 0, scr = (uint8_t*)0x8400 + 6 * 40; i < 32; i += 1)
-    {
-        wp = wpBase;
-        for (j = 0; j < 8; ++j)
-        {
-            uint8_t b1 = rows[i][j];
-
-            for (k = 0; k < 4; ++k)
-            {
-                uint8_t ch = ((b1 & 0xc0) >> 4);
-                b1 <<= 2;
-                *(wp++) = ch;
-            }
-        }
-        wpBase = wpBase + 40;
-    }
-#endif
     while (1) {}
 
     return 0;

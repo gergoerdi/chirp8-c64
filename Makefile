@@ -1,25 +1,34 @@
+-include Make.vars
+
+ifndef LLVM_MOS
+$(error Please set LLVM_MOS in Make.vars)
+endif
+
+ifndef LLVM_MOS_SDK
+$(error Please set LLVM_MOS_SDK in Make.vars)
+endif
+
+CLANG		= $(LLVM_MOS)/bin/clang --config $(LLVM_MOS_SDK)/commodore/64.cfg -O2
+
 C_SRCS		= $(wildcard *.c)
 ASM_SRCS	= $(wlidcard *.s)
-PRG		= charset.prg
 
 OUTDIR		= _build
 
 OBJS		= $(patsubst %.c, $(OUTDIR)/%.c.o, $(C_SRCS)) \
 		  $(patsubst %.s, $(OUTDIR)/%.s.o, $(ASM_SRC))
+PRG		= $(OUTDIR)/charset.prg
 
 .PHONY: all clean
 
 all: $(PRG)
 
 clean:
-	rm -f $(PRG)
+	rm -rf _build
 
-# $(OUTDIR)/%.c.o: %.c
-# 	mkdir -p $(OUTDIR)
-# 	cl65 -t c64 -c $< -o $@
+$(OUTDIR)/%.c.o: %.c
+	mkdir -p $(OUTDIR)
+	$(CLANG) -c $^ -o $@
 
-# $(OUTDIR)/%.s.o: %.s
-# 	cl65 -t c64 -c $< -o $@
-
-%.prg: $(C_SRCS) $(ASM_SRCS)
-	cl65 -t c64 $^ -o $@
+$(PRG): $(OBJS)
+	$(CLANG) $^ -o $@
