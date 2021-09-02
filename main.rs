@@ -54,7 +54,7 @@ pub extern "C" fn drawScreen (scr: *mut u8) -> () {
 
         for x in (0..64).step_by(2) {
             // Take top two bits of row1 and row2
-            let ch : u8 = (((row1 >> 62) << 2) | (row2 >> 62)) as u8;
+            let ch = ((row1 >> 62) | ((row2 >> 62) << 2)) as u8;
             row1 <<= 2;
             row2 <<= 2;
             unsafe { *ptr = ch; }
