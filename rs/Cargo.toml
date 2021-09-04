@@ -7,3 +7,4 @@ authors = ["ÉRDI Gergő <gergo@erdi.hu>"]
 crate-type = ["rlib"]
 
 [dependencies]
+chip8-engine = { path="chip8-engine" }

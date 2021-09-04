@@ -5,3 +5,10 @@ version = 3
 [[package]]
 name = "chip8-c64"
 version = "0.1.0"
+dependencies = [
+ "chip8-engine",
+]
+
+[[package]]
+name = "chip8-engine"
+version = "0.1.0"

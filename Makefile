@@ -19,7 +19,7 @@ RUSTFLAGS	= -C debuginfo=0 -C opt-level=1
 
 OBJS		= $(patsubst src/%.c, $(OUTDIR)/%.c.o, $(C_SRCS)) \
 		  $(patsubst src/%.s, $(OUTDIR)/%.s.o, $(ASM_SRCS))
-RUST_LL		= $(RUSTDIR)/target/debug/deps/chip8_c64-e3f061832e36f8e4.ll
+RUST_LL		= $(RUSTDIR)/target/debug/deps/chip8_c64-1ab64ef70703d8f9.ll
 PRG		= $(OUTDIR)/charset.prg
 
 .PHONY: all clean cargo
