@@ -6,5 +6,8 @@ authors = ["ÉRDI Gergő <gergo@erdi.hu>"]
 [lib]
 crate-type = ["rlib"]
 
+[profile.release]
+panic = "abort"
+
 [dependencies]
 chip8-engine = { path="chip8-engine" }
