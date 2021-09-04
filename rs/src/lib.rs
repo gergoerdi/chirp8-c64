@@ -7,3 +7,4 @@ pub mod machine;
 pub mod video;
 pub mod font;
 pub mod engine;
+pub mod panic;
