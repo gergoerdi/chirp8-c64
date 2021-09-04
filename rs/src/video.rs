@@ -1,3 +1,6 @@
+use chip8::prelude::*;
+use chip8::peripherals::*;
+
 static mut ROWS: [u64; 32] = [
     0x0000000000000000,
     0x0000000000000000,
@@ -42,27 +45,30 @@ pub extern "C" fn clrText (scr: *mut u8) -> () {
     }
 }
 
+const STRIDE : isize = 40;
+
+fn draw_row (scr: *mut u8, y: ScreenY) -> () {
+    let (_, rows, _) = unsafe { ROWS.align_to::<u8>() };
+    let mut ptr = unsafe{ scr.offset((4 + (y / 2) as isize) * STRIDE + 4) };
+
+    for i in 0..8 {
+        let mut row1 = rows[(y as usize + 0) * 8 + (7 - i)];
+        let mut row2 = rows[(y as usize + 1) * 8 + (7 - i)];
+
+        for _ in 0..4 {
+            // Take top two bits of row1 and row2
+            let ch = (row1 >> 6) | ((row2 >> 6) << 2);
+            row1 <<= 2;
+            row2 <<= 2;
+            unsafe { *ptr = ch; };
+            ptr = unsafe{ ptr.offset(1) };
+        }
+    }
+}
+
 #[no_mangle]
 pub extern "C" fn drawScreen (scr: *mut u8) -> () {
-    let (_, rows, _) = unsafe { ROWS.align_to::<u8>() };
-
-    let mut base = unsafe{ scr.offset(4 * 40 + 4) };
     for y in (0..32).step_by(2) {
-        let mut ptr = base;
-
-        for i in 0..8 {
-            let mut row1 = rows[(y + 0) * 8 + (7 - i)];
-            let mut row2 = rows[(y + 1) * 8 + (7 - i)];
-
-            for _ in 0..4 {
-                // Take top two bits of row1 and row2
-                let ch = (row1 >> 6) | ((row2 >> 6) << 2);
-                row1 <<= 2;
-                row2 <<= 2;
-                unsafe { *ptr = ch; };
-                ptr = unsafe{ ptr.offset(1) };
-            }
-        }
-        base = unsafe{ base.offset(40) };
+        draw_row(scr, y)
     }
 }
