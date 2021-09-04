@@ -1,0 +1,9 @@
+[package]
+name = "chip8-c64"
+version = "0.1.0"
+authors = ["ÉRDI Gergő <gergo@erdi.hu>"]
+
+[lib]
+crate-type = ["rlib"]
+
+[dependencies]

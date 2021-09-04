@@ -12,34 +12,33 @@ CLANG		= $(LLVM_MOS)/bin/clang --config $(LLVM_MOS_SDK)/commodore/64.cfg -O2
 
 C_SRCS		= $(wildcard src/*.c)
 ASM_SRCS	= $(wlidcard src/*.s)
-RUST_SRCS	= $(wildcard src/*.rs)
 
 OUTDIR		= _build
+RUSTDIR		= rs
+RUSTFLAGS	= -C debuginfo=0 -C opt-level=1
 
 OBJS		= $(patsubst src/%.c, $(OUTDIR)/%.c.o, $(C_SRCS)) \
-		  $(patsubst src/%.s, $(OUTDIR)/%.s.o, $(ASM_SRCS)) \
-		  $(patsubst src/%.rs, $(OUTDIR)/%.rs.ll, $(RUST_SRCS))
+		  $(patsubst src/%.s, $(OUTDIR)/%.s.o, $(ASM_SRCS))
+RUST_LL		= $(RUSTDIR)/target/debug/deps/chip8_c64-e3f061832e36f8e4.ll
 PRG		= $(OUTDIR)/charset.prg
 
-.PHONY: all clean
+.PHONY: all clean cargo
 
 all: $(PRG)
 
 clean:
 	rm -rf _build
+	cd $(RUSTDIR) && cargo clean
 
 $(OUTDIR)/%.c.o: src/%.c
 	mkdir -p $(OUTDIR)
 	$(CLANG) -c -o $@ $^
 
-$(OUTDIR)/%.rs.ll: src/%.rs
-	mkdir -p $(OUTDIR)
-	rustc --crate-type=rlib \
-	  -C debuginfo=0 \
-	  -C opt-level=1 \
-	  --emit=llvm-ir \
-	  -o $@ $^
+$(RUST_LL): cargo
 
-$(PRG): $(OBJS)
+cargo:
+	cd $(RUSTDIR) && cargo rustc -- $(RUSTFLAGS) --emit=llvm-ir
+
+$(PRG): $(OBJS) $(RUST_LL)
 	mkdir -p $(OUTDIR)
 	$(CLANG) -o $@ $^
