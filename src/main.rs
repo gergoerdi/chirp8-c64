@@ -45,27 +45,6 @@ pub extern "C" fn clrText (scr: *mut u8) -> () {
 }
 
 #[no_mangle]
-pub extern "C" fn drawScreenSlow (scr: *mut u8) -> () {
-    let mut base = unsafe{ scr.offset(4 * 40 + 4) };
-    for y in (0..32).step_by(2) {
-        let mut ptr = base;
-        let mut row1 = unsafe { ROWS[y] };
-        let mut row2 = unsafe { ROWS[y + 1] };
-
-        for x in (0..64).step_by(2) {
-            // Take top two bits of row1 and row2
-            let ch = ((row1 >> 62) | ((row2 >> 62) << 2)) as u8;
-            row1 <<= 2;
-            row2 <<= 2;
-            unsafe { *ptr = ch; }
-            ptr = unsafe{ ptr.offset(1) };
-        }
-
-        base = unsafe{ base.offset(40) };
-    }
-}
-
-#[no_mangle]
 pub extern "C" fn drawScreen (scr: *mut u8) -> () {
     let (_, rows, _) = unsafe { ROWS.align_to::<u8>() };
 
