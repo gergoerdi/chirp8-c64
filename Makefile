@@ -30,16 +30,16 @@ clean:
 
 $(OUTDIR)/%.c.o: src/%.c
 	mkdir -p $(OUTDIR)
-	$(CLANG) -c $^ -o $@
+	$(CLANG) -c -o $@ $^
 
 $(OUTDIR)/%.rs.ll: src/%.rs
 	mkdir -p $(OUTDIR)
 	rustc --crate-type=rlib \
 	  -C debuginfo=0 \
 	  -C opt-level=1 \
-	  $^ \
-	  --emit=llvm-ir -o $@
+	  --emit=llvm-ir \
+	  -o $@ $^
 
 $(PRG): $(OBJS)
 	mkdir -p $(OUTDIR)
-	$(CLANG) $^ -o $@
+	$(CLANG) -o $@ $^
