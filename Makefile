@@ -12,19 +12,21 @@ CLANG		= $(LLVM_MOS)/bin/clang --config $(LLVM_MOS_SDK)/commodore/64.cfg -O2
 
 C_SRCS		= $(wildcard src/*.c)
 ASM_SRCS	= $(wlidcard src/*.s)
+IR_SRCS		= $(wildcard src/*.ll)
+RUST_IRS	= chip8_c64-e21ff59526dd729a
 
 OUTDIR		= _build
-RUSTDIR		= rs
+RUST_SRCDIR	= rs
+RUST_BUILDDIR	= $(RUST_SRCDIR)/target/release/deps
 RUSTFLAGS	= -C debuginfo=0 -C opt-level=1
+RUST_IR_OBJS	= $(patsubst %, $(RUST_BUILDDIR)/%.ll, $(RUST_IRS))
 
 OBJS		= \
 		$(patsubst src/%.c, $(OUTDIR)/%.c.o, $(C_SRCS)) \
-		$(patsubst src/%.s, $(OUTDIR)/%.s.o, $(ASM_SRCS))
-RUST_LL		= \
-		$(RUSTDIR)/chip8-engine/target/release/deps/chip8_engine-f2208a359796fb63.ll \
-		$(RUSTDIR)/target/release/deps/chip8_c64-a95cc9a5a3e99697.ll
+		$(patsubst src/%.s, $(OUTDIR)/%.s.o, $(ASM_SRCS)) \
+		$(patsubst src/%.ll, $(OUTDIR)/%.ll.o, $(IR_SRCS))
 
-PRG		= $(OUTDIR)/charset.prg
+PRG		= $(OUTDIR)/chip8.prg
 
 .PHONY: all clean cargo
 
@@ -32,19 +34,23 @@ all: $(PRG)
 
 clean:
 	rm -rf _build
-	cd $(RUSTDIR)/chip8-engine && cargo clean
-	cd $(RUSTDIR) && cargo clean
+	cd $(RUST_SRCDIR) && cargo clean
 
 $(OUTDIR)/%.c.o: src/%.c
 	mkdir -p $(OUTDIR)
 	$(CLANG) -c -o $@ $^
 
-$(RUST_LL): cargo
+$(OUTDIR)/%.ll.o: src/%.ll
+	mkdir -p $(OUTDIR)
+	$(CLANG) -c -o $@ $^
+
+$(RUST_IR_OBJS): cargo
 
 cargo:
-	cd $(RUSTDIR)/chip8-engine && cargo rustc --release -- $(RUSTFLAGS) --emit=llvm-ir
-	cd $(RUSTDIR) && cargo rustc --release -- $(RUSTFLAGS) --emit=llvm-ir
+	cd $(RUST_SRCDIR) && \
+		RUSTFLAGS="$(RUSTFLAGS) --emit=llvm-ir" \
+		cargo rustc --release
 
-$(PRG): $(OBJS) $(RUST_LL)
+$(PRG): $(OBJS) $(RUST_IR_OBJS)
 	mkdir -p $(OUTDIR)
 	$(CLANG) -o $@ $^
