@@ -1,8 +1,7 @@
 #include <stdint.h>
 #include <stdio.h>
 
-extern void clrText(uint8_t* scr);
-extern void drawScreen(uint8_t* scr);
+extern void run(uint8_t* scr);
 
 int main ()
 {
@@ -43,9 +42,7 @@ int main ()
         }
     }
 
-    clrText(scr);
-    drawScreen(scr);
-    while (1) {}
+    run(scr);
 
     return 0;
 }

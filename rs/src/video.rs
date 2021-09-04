@@ -1,43 +1,6 @@
 use chip8::prelude::*;
-use chip8::peripherals::*;
 
-static mut ROWS: [u64; 32] = [
-    0x0000000000000000,
-    0x0000000000000000,
-    0x0000000000000000,
-    0x0000000000000000,
-    0x0000000000000000,
-    0x0000000000000000,
-    0x0000000000000000,
-    0x0000000000000000,
-    0x0000000000000000,
-    0x0008bef3cfa21000,
-    0x0008884928321000,
-    0x000f88492e2a1000,
-    0x0008884928260000,
-    0x0008bef3cfa21000,
-    0x0000000000000000,
-    0x0000008e22800000,
-    0x0000008a3b800000,
-    0x000000ae39000000,
-    0x0000000000000000,
-    0x000f08a8befbc000,
-    0x000488ac88822000,
-    0x00048aaa88e3c000,
-    0x00048aa988828000,
-    0x000f252888fa4000,
-    0x0000000000000000,
-    0x0000000000000000,
-    0x0000000000000000,
-    0x0000000000000000,
-    0x0000000000000000,
-    0x0000000000000000,
-    0x0000000000000000,
-    0x0000000000000000,
-];
-
-#[no_mangle]
-pub extern "C" fn clrText (scr: *mut u8) {
+pub fn clear_screen (scr: *mut u8) {
     let arr = unsafe { core::slice::from_raw_parts_mut(scr, 1000) };
 
     for i in 0..1000 {
@@ -47,8 +10,7 @@ pub extern "C" fn clrText (scr: *mut u8) {
 
 const STRIDE : isize = 40;
 
-fn draw_row (scr: *mut u8, y: ScreenY) {
-    let (_, rows, _) = unsafe { ROWS.align_to::<u8>() };
+fn draw_row (scr: *mut u8, rows: &[u8], y: ScreenY) {
     let mut ptr = unsafe{ scr.offset((4 + (y / 2) as isize) * STRIDE + 4) };
 
     for i in 0..8 {
@@ -66,9 +28,9 @@ fn draw_row (scr: *mut u8, y: ScreenY) {
     }
 }
 
-#[no_mangle]
-pub extern "C" fn drawScreen (scr: *mut u8) {
+pub fn draw_screen (scr: *mut u8, rows: &[u64; 32]) {
+    let (_, row_bytes, _) = unsafe { rows.align_to::<u8>() };
     for y in (0..32).step_by(2) {
-        draw_row(scr, y)
+        draw_row(scr, row_bytes, y)
     }
 }
