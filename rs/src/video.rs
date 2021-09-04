@@ -37,7 +37,7 @@ static mut ROWS: [u64; 32] = [
 ];
 
 #[no_mangle]
-pub extern "C" fn clrText (scr: *mut u8) -> () {
+pub extern "C" fn clrText (scr: *mut u8) {
     let arr = unsafe { core::slice::from_raw_parts_mut(scr, 1000) };
 
     for i in 0..1000 {
@@ -47,7 +47,7 @@ pub extern "C" fn clrText (scr: *mut u8) -> () {
 
 const STRIDE : isize = 40;
 
-fn draw_row (scr: *mut u8, y: ScreenY) -> () {
+fn draw_row (scr: *mut u8, y: ScreenY) {
     let (_, rows, _) = unsafe { ROWS.align_to::<u8>() };
     let mut ptr = unsafe{ scr.offset((4 + (y / 2) as isize) * STRIDE + 4) };
 
@@ -67,7 +67,7 @@ fn draw_row (scr: *mut u8, y: ScreenY) -> () {
 }
 
 #[no_mangle]
-pub extern "C" fn drawScreen (scr: *mut u8) -> () {
+pub extern "C" fn drawScreen (scr: *mut u8) {
     for y in (0..32).step_by(2) {
         draw_row(scr, y)
     }
