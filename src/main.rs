@@ -9,6 +9,7 @@ static mut ROWS: [u64; 32] = [
     0x0000000000000000,
     0x0000000000000000,
     0x0000000000000000,
+    0x0000000000000000,
     0x0008bef3cfa21000,
     0x0008884928321000,
     0x000f88492e2a1000,
@@ -32,7 +33,6 @@ static mut ROWS: [u64; 32] = [
     0x0000000000000000,
     0x0000000000000000,
     0x0000000000000000,
-    0x0000000000000000
 ];
 
 #[no_mangle]
@@ -40,13 +40,13 @@ pub extern "C" fn clrText (scr: *mut u8) -> () {
     let arr = unsafe { core::slice::from_raw_parts_mut(scr, 1000) };
 
     for i in 0..1000 {
-        arr[i] = 0;
+        arr[i] = 0x0f;
     }
 }
 
 #[no_mangle]
 pub extern "C" fn drawScreenSlow (scr: *mut u8) -> () {
-    let mut base = unsafe{ scr.offset(2 * 40 + 4) };
+    let mut base = unsafe{ scr.offset(4 * 40 + 4) };
     for y in (0..32).step_by(2) {
         let mut ptr = base;
         let mut row1 = unsafe { ROWS[y] };
@@ -69,7 +69,7 @@ pub extern "C" fn drawScreenSlow (scr: *mut u8) -> () {
 pub extern "C" fn drawScreen (scr: *mut u8) -> () {
     let (_, rows, _) = unsafe { ROWS.align_to::<u8>() };
 
-    let mut base = unsafe{ scr.offset(2 * 40 + 4) };
+    let mut base = unsafe{ scr.offset(4 * 40 + 4) };
     for y in (0..32).step_by(2) {
         let mut ptr = base;
 
