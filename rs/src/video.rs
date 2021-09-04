@@ -1,4 +1,4 @@
-use chip8::prelude::*;
+use prelude::*;
 
 pub fn clear_screen (scr: *mut u8) {
     let arr = unsafe { core::slice::from_raw_parts_mut(scr, 1000) };

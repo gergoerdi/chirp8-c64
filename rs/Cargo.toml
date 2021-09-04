@@ -10,4 +10,3 @@ crate-type = ["rlib"]
 panic = "abort"
 
 [dependencies]
-chip8-engine = { path="chip8-engine" }

@@ -1,6 +1,6 @@
-use chip8::prelude::*;
-use chip8::peripherals::*;
-use chip8::machine::Machine;
+use prelude::*;
+use peripherals::*;
+use machine::Machine;
 
 use video::*;
 use font::*;

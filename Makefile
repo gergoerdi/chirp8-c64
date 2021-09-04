@@ -20,9 +20,7 @@ RUSTFLAGS	= -C debuginfo=0 -C opt-level=1
 OBJS		= \
 		$(patsubst src/%.c, $(OUTDIR)/%.c.o, $(C_SRCS)) \
 		$(patsubst src/%.s, $(OUTDIR)/%.s.o, $(ASM_SRCS))
-RUST_LL		= \
-		$(RUSTDIR)/chip8-engine/target/release/deps/chip8_engine-f2208a359796fb63.ll \
-		$(RUSTDIR)/target/release/deps/chip8_c64-a95cc9a5a3e99697.ll
+RUST_LL		= $(RUSTDIR)/target/release/deps/chip8_c64-e21ff59526dd729a.ll
 
 PRG		= $(OUTDIR)/charset.prg
 
@@ -32,7 +30,6 @@ all: $(PRG)
 
 clean:
 	rm -rf _build
-	cd $(RUSTDIR)/chip8-engine && cargo clean
 	cd $(RUSTDIR) && cargo clean
 
 $(OUTDIR)/%.c.o: src/%.c
@@ -42,7 +39,6 @@ $(OUTDIR)/%.c.o: src/%.c
 $(RUST_LL): cargo
 
 cargo:
-	cd $(RUSTDIR)/chip8-engine && cargo rustc --release -- $(RUSTFLAGS) --emit=llvm-ir
 	cd $(RUSTDIR) && cargo rustc --release -- $(RUSTFLAGS) --emit=llvm-ir
 
 $(PRG): $(OBJS) $(RUST_LL)
