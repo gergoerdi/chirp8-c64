@@ -32,6 +32,8 @@ int main ()
         }
     }
 
+    clear_screen(scr);
+
     /* Use 0xc000..0xffff for VIC graphics */
     uint8_t* const cia2aDDR = (uint8_t*)0xdd02;
     uint8_t* const cia2aDR = (uint8_t*)0xdd00;

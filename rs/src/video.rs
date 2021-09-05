@@ -1,6 +1,7 @@
 use chip8::prelude::*;
 
-pub fn clear_screen (scr: *mut u8) {
+#[no_mangle]
+pub extern "C" fn clear_screen (scr: *mut u8) {
     let arr = unsafe { core::slice::from_raw_parts_mut(scr, 1000) };
 
     for i in 0..1000 {

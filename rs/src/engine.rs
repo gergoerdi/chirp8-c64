@@ -118,7 +118,6 @@ pub extern "C" fn run (scr: *mut u8) {
         addr += 1;
     }
 
-    clear_screen(c64.scr);
     let mut machine = Machine::new();
     loop {
         machine.step(&mut c64);
