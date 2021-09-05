@@ -32,7 +32,38 @@ impl Peripherals for C64 {
     }
 
     fn scan_key_row(&self, row: Byte) -> Byte {
-        0
+        let code = unsafe{ *(0x00c5 as *const u8) };
+        match row {
+            0 => match code {
+                0x38 => 0b0001,
+                0x3b => 0b0010,
+                0x08 => 0b0100,
+                0x0b => 0b1000,
+                _    => 0b0000
+            },
+            1 => match code {
+                0x3e => 0b0001,
+                0x09 => 0b0010,
+                0x0e => 0b0100,
+                0x11 => 0b1000,
+                _    => 0b0000
+            },
+            2 => match code {
+                0x0a => 0b0001,
+                0x0d => 0b0010,
+                0x12 => 0b0100,
+                0x15 => 0b1000,
+                _    => 0b0000
+            },
+            3 => match code {
+                0x0c => 0b0001,
+                0x17 => 0b0010,
+                0x14 => 0b0100,
+                0x1f => 0b1000,
+                _    => 0b0000
+            },
+            _ => unreachable!()
+        }
     }
 
     fn set_timer(&mut self, val: Byte) {
