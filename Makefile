@@ -13,7 +13,9 @@ CLANG		= $(LLVM_MOS)/bin/clang --config $(LLVM_MOS_SDK)/commodore/64.cfg -O2
 C_SRCS		= $(wildcard src/*.c)
 ASM_SRCS	= $(wlidcard src/*.s)
 IR_SRCS		= $(wildcard src/*.ll)
-RUST_IRS	= chip8_c64-e21ff59526dd729a
+RUST_IRS	= \
+		chip8_c64-a95cc9a5a3e99697 \
+		chip8_engine-2a1bf4bc9333b677
 
 OUTDIR		= _build
 RUST_SRCDIR	= rs
