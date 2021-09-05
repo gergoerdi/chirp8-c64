@@ -5,6 +5,10 @@ use chip8::machine::Machine;
 use video::*;
 use font::*;
 
+extern "C" {
+    static mut timer_reg: u8;
+}
+
 // TODO: get length from file
 const PROG : &[u8; 850] = include_bytes!("../../roms/hidden.ch8");
 
@@ -67,10 +71,11 @@ impl Peripherals for C64 {
     }
 
     fn set_timer(&mut self, val: Byte) {
+        unsafe{ timer_reg = val }
     }
 
     fn get_timer(&self) -> Byte {
-        0
+        unsafe{ timer_reg }
     }
 
     fn set_sound(&mut self, _val: Byte) {

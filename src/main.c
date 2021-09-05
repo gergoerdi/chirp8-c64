@@ -3,6 +3,7 @@
 
 #include "interrupt.h"
 
+uint8_t timer_reg;
 extern void run(uint8_t* scr);
 
 int main ()
@@ -54,6 +55,8 @@ __attribute__((no_isr))
 void irq() {
     POKE(0xd019, 0xff);
     /* POKE(0xd021, PEEK(0xd021) + 1); */
+
+    if (timer_reg > 0) --timer_reg;
 
     __asm__("jmp 0xea31");
 }
