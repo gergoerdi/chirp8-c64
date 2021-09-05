@@ -13,13 +13,11 @@ CLANG		= $(LLVM_MOS)/bin/clang --config $(LLVM_MOS_SDK)/commodore/64.cfg -O2
 C_SRCS		= $(wildcard src/*.c)
 ASM_SRCS	= $(wlidcard src/*.s)
 IR_SRCS		= $(wildcard src/*.ll)
-RUST_IRS	= \
-		chip8_c64-097aea444dddd80f \
-		core-de070bf48053f31e
+RUST_IRS	= chip8_c64-e21ff59526dd729a
 
 OUTDIR		= _build
 RUST_SRCDIR	= rs
-RUST_BUILDDIR	= $(RUST_SRCDIR)/target/x86_64-unknown-linux-gnu/release/deps
+RUST_BUILDDIR	= $(RUST_SRCDIR)/target/release/deps
 RUSTFLAGS	= -C debuginfo=0 -C opt-level=1
 RUST_IR_OBJS	= $(patsubst %, $(RUST_BUILDDIR)/%.ll, $(RUST_IRS))
 
@@ -51,7 +49,7 @@ $(RUST_IR_OBJS): cargo
 cargo:
 	cd $(RUST_SRCDIR) && \
 		RUSTFLAGS="$(RUSTFLAGS) --emit=llvm-ir" \
-		cargo rustc --release -Z build-std --target x86_64-unknown-linux-gnu
+		cargo rustc --release
 
 $(PRG): $(OBJS) $(RUST_IR_OBJS)
 	mkdir -p $(OUTDIR)
