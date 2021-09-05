@@ -7,6 +7,16 @@ pub extern "C" fn clear_screen (scr: *mut u8) {
     for i in 0..1000 {
         arr[i] = 0x0f;
     }
+
+    let color_arr = unsafe { core::slice::from_raw_parts_mut(0xd800 as *mut u8, 1000) };
+    for i in 0..1000 {
+        color_arr[i] = 0x0b;
+    }
+    for y in 4..4 + 16 {
+        for x in 4..4 + 32 {
+            color_arr[y * 40 + x] = 0x07;
+        }
+    }
 }
 
 const STRIDE : isize = 40;

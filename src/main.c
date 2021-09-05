@@ -39,10 +39,16 @@ int main ()
     uint8_t* const cia2aDR = (uint8_t*)0xdd00;
     uint8_t* const krnlScr = (uint8_t*)0x0288;
     uint8_t* const vicPtr = (uint8_t*)0xd018;
+    uint8_t* const borderColor = (uint8_t*)0xd020;
+    uint8_t* const bgColor = (uint8_t*)0xd021;
 
     *cia2aDDR |= 0x3;
     *cia2aDR = *cia2aDR & 0xfc | 0x00;
     *krnlScr = 0xc0;
+
+    /* Color scheme */
+    *borderColor = 0x0b;
+    *bgColor = 0x00;
 
     /* Start char font at 0x8000 */
     *vicPtr = (*vicPtr & 0xf0) | 0x0 | (*vicPtr & 0x01);
