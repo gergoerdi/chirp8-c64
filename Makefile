@@ -11,7 +11,7 @@ endif
 CLANG		= $(LLVM_MOS)/bin/clang --config $(LLVM_MOS_SDK)/commodore/64.cfg -O2
 
 C_SRCS		= $(wildcard src/*.c)
-ASM_SRCS	= $(wlidcard src/*.s)
+ASM_SRCS	= $(wildcard src/*.s)
 IR_SRCS		= $(wildcard src/*.ll)
 
 OUTDIR		= _build
@@ -47,6 +47,10 @@ $(OUTDIR)/%.c.s: $(OUTDIR)/%.c.ll
 $(OUTDIR)/%.c.o: src/%.c
 	mkdir -p $(OUTDIR)
 	$(CLANG) -c -o $@ $^
+
+$(OUTDIR)/%.s.o: src/%.s
+	mkdir -p $(OUTDIR)
+	$(CLANG) -Wl,--lto-emit-asm -c -o $@ $<
 
 $(OUTDIR)/%.c.bc: src/%.c
 	mkdir -p $(OUTDIR)

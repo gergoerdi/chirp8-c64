@@ -1,14 +1,80 @@
 #include <stdint.h>
 #include <stdio.h>
+#include <chrout.h>
 
 #include "interrupt.h"
+#include "dir.h"
 
 uint8_t timer_reg;
 extern void clear_screen(uint8_t* scr);
 extern void run(uint8_t* scr);
 
+void print_label(const char* name)
+{
+    k_ldplot(0, 12);
+    __chrout(0x12); // reverse on
+    for (const char* i = name; *i; ++i)
+        __chrout(*i);
+    __chrout(0x92); // reverse off
+}
+
+void print_file(const char* name)
+{
+    k_ldplot(1, 12);
+    for (const char* i = name; *i; ++i)
+        __chrout(*i);
+}
+
+void dir()
+{
+    char* scr = (char*)0x0400;
+    for (int i = 0; i < 1000; ++i)
+        *(scr++) = ' ';
+
+    uint8_t num_dirents = 0;
+    dirent dirents[144];
+
+    opendir(2,8);
+    dirent* dirent = dirents;
+
+    while (readdir(dirent))
+    {
+        /* if (disklabel) */
+        /*     print_label(dirent.d_name); */
+        /* else */
+        /*     print_file(dirent.d_name); */
+        /* disklabel = false; */
+        dirent++;
+        num_dirents++;
+    }
+    closedir(2);
+
+    dirent = dirents;
+    for (uint8_t i = 0; i < num_dirents; ++i, ++dirent)
+    {
+        if (i == 0)
+            print_label(dirents[i].d_name);
+        else
+            print_file(dirents[i].d_name);
+    }
+}
+
 int main ()
 {
+    dir();
+    return 0;
+
+    opendir(2,8);
+    dirent dirent;
+    while (readdir(&dirent))
+    {
+        for (char* ptr = dirent.d_name; *ptr; ++ptr)
+            __chrout(*ptr);
+        __chrout('\r');
+    }
+    closedir(2);
+    return 0;
+
     uint8_t* const scr = (uint8_t*)0xc400;
     uint8_t* const font = (uint8_t*)0xc000;
 
