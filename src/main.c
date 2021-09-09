@@ -4,6 +4,7 @@
 #include "interrupt.h"
 
 uint8_t timer_reg;
+extern void clear_screen(uint8_t* scr);
 extern void run(uint8_t* scr);
 
 int main ()
