@@ -28,8 +28,29 @@ void print_file(const char* name)
 void dir()
 {
     char* scr = (char*)0x0400;
+    const uint8_t window_size = 8;
     for (int i = 0; i < 1000; ++i)
         *(scr++) = ' ';
+
+    k_ldplot(10, 11);
+    __chrout(0x75);
+    for (int i = 0; i < 16; ++i)
+        __chrout(0x60);
+    __chrout(0xae);
+
+    k_ldplot(10 + window_size + 1, 11);
+    __chrout(0xad);
+    for (int i = 0; i < 16; ++i)
+        __chrout(0x60); // 64 looks quite nice here
+    __chrout(0x6b);
+
+    for (int i = 1; i < window_size + 1; ++i)
+    {
+        k_ldplot(10 + i, 11);
+        __chrout(0x62);
+        k_ldplot(10 + i, 12 + 16);
+        __chrout(0x62);
+    }
 
     uint8_t num_dirents = 0;
     dirent dirents[144];
@@ -39,23 +60,72 @@ void dir()
 
     while (readdir(dirent))
     {
-        /* if (disklabel) */
-        /*     print_label(dirent.d_name); */
-        /* else */
-        /*     print_file(dirent.d_name); */
-        /* disklabel = false; */
         dirent++;
         num_dirents++;
     }
     closedir(2);
 
-    dirent = dirents;
-    for (uint8_t i = 0; i < num_dirents; ++i, ++dirent)
+    uint8_t sel = 1;
+    uint8_t offset = 0;
+
+    bool wait_release = false;
+
+    while (true)
     {
-        if (i == 0)
-            print_label(dirents[i].d_name);
-        else
-            print_file(dirents[i].d_name);
+        dirent = &(dirents[offset + 1]);
+        for (uint8_t i = 1; i <= window_size && offset + i < num_dirents; ++i, ++dirent)
+        {
+            bool current = offset + i == sel;
+            k_ldplot(10 + i, 12);
+            if (current)
+                __chrout(0x12); // reverse on
+            const char* ptr = dirent->d_name;
+            for (int i = 0; i < 16; ++i)
+            {
+                if (*ptr)
+                    __chrout(*(ptr++));
+                else
+                    __chrout(' ');
+            }
+            if (current)
+                __chrout(0x92); // reverse off
+        }
+
+        volatile uint8_t* keyptr = (uint8_t*)(0x00c5);
+
+        if (wait_release)
+        {
+            while(true)
+            {
+                if (*keyptr == 0x40) break;
+            }
+            wait_release = false;
+        }
+
+        while (true)
+        {
+            volatile uint8_t key = *keyptr;
+
+            if (key == 0x0c || key == 0x17 || key == 0x14 || key == 0x1f) // down
+            {
+                if (sel == num_dirents - 1) continue;
+                wait_release = true;
+
+                ++sel;
+                if (sel - offset > window_size) ++offset;
+                goto redraw;
+            } else if(key == 0x3e || key == 0x09 || key == 0x0e || key == 0x11) // up
+            {
+                if (sel == 1) continue;
+                wait_release = true;
+
+                --sel;
+                if (sel <= offset) --offset;
+                goto redraw;
+            }
+        }
+    redraw:
+        ;
     }
 }
 
