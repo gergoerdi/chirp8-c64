@@ -64,3 +64,8 @@ cargo:
 $(PRG): cargo $(OBJS)
 	mkdir -p $(OUTDIR)
 	$(CLANG) -o $@ $(OBJS) $(wildcard $(RUST_BUILDDIR)/*.bc)
+
+$(OUTDIR)/chip8.s: cargo $(OBJS)
+	mkdir -p $(OUTDIR)
+	$(CLANG) -Wl,--lto-emit-asm -o $@ $(OBJS) $(wildcard $(RUST_BUILDDIR)/*.bc)
+
