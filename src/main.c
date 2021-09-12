@@ -9,26 +9,14 @@ uint8_t timer_reg;
 extern void clear_screen(uint8_t* scr);
 extern void run(uint8_t* scr);
 
-void print_label(const char* name)
-{
-    k_ldplot(0, 12);
-    __chrout(0x12); // reverse on
-    for (const char* i = name; *i; ++i)
-        __chrout(*i);
-    __chrout(0x92); // reverse off
-}
+void selectFile(dirent* dirents, uint8_t num_dirents);
+void initSelector();
 
-void print_file(const char* name)
-{
-    k_ldplot(1, 12);
-    for (const char* i = name; *i; ++i)
-        __chrout(*i);
-}
+const uint8_t window_size = 8;
 
-void dir()
+void initSelectorScreen()
 {
     char* scr = (char*)0x0400;
-    const uint8_t window_size = 8;
     for (int i = 0; i < 1000; ++i)
         *(scr++) = ' ';
 
@@ -51,7 +39,10 @@ void dir()
         k_ldplot(10 + i, 12 + 16);
         __chrout(0x62);
     }
+}
 
+void dir()
+{
     uint8_t num_dirents = 0;
     dirent dirents[144];
 
@@ -65,11 +56,18 @@ void dir()
     }
     closedir(2);
 
+    initSelectorScreen();
+    selectFile(dirents, num_dirents);
+}
+
+void selectFile(dirent* dirents, uint8_t num_dirents)
+{
     uint8_t sel = 1;
     uint8_t offset = 0;
 
     bool wait_release = false;
 
+    dirent *dirent = dirents;
     while (true)
     {
         dirent = &(dirents[offset + 1]);

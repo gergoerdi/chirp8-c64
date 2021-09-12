@@ -3,8 +3,11 @@
 #include "dir.h"
 #include "kernal.h"
 
+volatile uint8_t* border = (uint8_t*)(0xd020);
+
 bool getbyte(uint8_t *chr)
 {
+    ++(*border);
     if (k_readst() != 0) return false;
 
     *chr = k_chrin();
