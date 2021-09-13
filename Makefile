@@ -20,9 +20,9 @@ RUST_BUILDDIR	= $(RUST_SRCDIR)/target/release/deps
 RUSTFLAGS	= -C debuginfo=0 -C opt-level=1
 
 OBJS		= \
-		$(patsubst src/%.c, $(OUTDIR)/%.c.o, $(C_SRCS)) \
+		$(patsubst src/%.c, $(OUTDIR)/%.c.ll, $(C_SRCS)) \
 		$(patsubst src/%.s, $(OUTDIR)/%.s.o, $(ASM_SRCS)) \
-		$(patsubst src/%.ll, $(OUTDIR)/%.ll.o, $(IR_SRCS))
+		$(patsubst src/%.ll, $(OUTDIR)/%.ll.bc, $(IR_SRCS)) \
 
 PRG		= $(OUTDIR)/chirp8.prg
 
@@ -34,11 +34,23 @@ clean:
 	rm -rf _build
 	cd $(RUST_SRCDIR) && cargo clean
 
+$(OUTDIR)/%.c.ll: src/%.c
+	mkdir -p $(OUTDIR)
+	$(CLANG) -S -o $@ $^
+
+$(OUTDIR)/%.c.s: $(OUTDIR)/%.c.ll
+	mkdir -p $(OUTDIR)
+	$(LLVM_MOS)/bin/llc -o $@ $^
+
 $(OUTDIR)/%.c.o: src/%.c
 	mkdir -p $(OUTDIR)
 	$(CLANG) -c -o $@ $^
 
-$(OUTDIR)/%.ll.o: src/%.ll
+$(OUTDIR)/%.c.bc: src/%.c
+	mkdir -p $(OUTDIR)
+	$(CLANG) -c -o $@ $^
+
+$(OUTDIR)/%.ll.bc: src/%.ll
 	mkdir -p $(OUTDIR)
 	$(CLANG) -c -o $@ $^
 
@@ -46,9 +58,9 @@ $(RUST_IR_OBJS): cargo
 
 cargo:
 	cd $(RUST_SRCDIR) && \
-		RUSTFLAGS="$(RUSTFLAGS) --emit=llvm-ir" \
+		RUSTFLAGS="$(RUSTFLAGS) --emit=llvm-bc" \
 		cargo rustc --release
 
 $(PRG): cargo $(OBJS)
 	mkdir -p $(OUTDIR)
-	$(CLANG) -o $@ $(OBJS) $(wildcard $(RUST_BUILDDIR)/*.ll)
+	$(CLANG) -o $@ $(OBJS) $(wildcard $(RUST_BUILDDIR)/*.bc)
