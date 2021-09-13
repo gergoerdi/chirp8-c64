@@ -24,7 +24,7 @@ OBJS		= \
 		$(patsubst src/%.s, $(OUTDIR)/%.s.o, $(ASM_SRCS)) \
 		$(patsubst src/%.ll, $(OUTDIR)/%.ll.o, $(IR_SRCS))
 
-PRG		= $(OUTDIR)/chip8.prg
+PRG		= $(OUTDIR)/chirp8.prg
 
 .PHONY: all clean cargo
 

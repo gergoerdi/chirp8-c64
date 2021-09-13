@@ -3,12 +3,12 @@
 version = 3
 
 [[package]]
-name = "chip8-c64"
+name = "chirp8-c64"
 version = "0.1.0"
 dependencies = [
- "chip8-engine",
+ "chirp8-engine",
 ]
 
 [[package]]
-name = "chip8-engine"
+name = "chirp8-engine"
 version = "0.1.0"

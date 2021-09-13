@@ -1,3 +1,3 @@
 [submodule "rs/chip8-engine"]
-	path = rs/chip8-engine
+	path = rs/chirp8-engine
 	url = git@github.com:gergoerdi/rust-avr-chip8-engine.git

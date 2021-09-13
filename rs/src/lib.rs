@@ -1,6 +1,6 @@
 #![no_std]
 
-extern crate chip8_engine as chip8;
+extern crate chirp8_engine as chip8;
 
 pub mod video;
 pub mod font;

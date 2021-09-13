@@ -1,5 +1,5 @@
 [package]
-name = "chip8-c64"
+name = "chirp8-c64"
 version = "0.1.0"
 authors = ["ÉRDI Gergő <gergo@erdi.hu>"]
 
@@ -10,4 +10,4 @@ crate-type = ["rlib"]
 panic = "abort"
 
 [dependencies]
-chip8-engine = { path="chip8-engine" }
+chirp8-engine = { path="chirp8-engine" }
