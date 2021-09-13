@@ -3,11 +3,12 @@
 #include <chrout.h>
 
 #include "file_selector.h"
+#include "load.h"
 #include "c64.h"
 
 const uint8_t window_size = 8;
 
-void selectAndLoadFile()
+void selectAndLoadFile(void* dest)
 {
     uint8_t num_dirents = 0;
     dirent dirents[144];
@@ -25,7 +26,9 @@ void selectAndLoadFile()
     *border = border_before;
 
     initSelectorScreen();
-    selectFile(dirents, num_dirents);
+    uint8_t selection = selectFile(dirents, num_dirents);
+    void* dest_end = dest;
+    load(8, dirents[selection].d_name, &dest_end);
 }
 
 void initSelectorScreen()

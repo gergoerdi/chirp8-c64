@@ -102,3 +102,19 @@ void k_ldplot (uint8_t col, uint8_t row)
         : "a", "p"
         );
 }
+
+uint8_t k_load (uint8_t mode, void** dest)
+{
+    uint8_t lo = (uint8_t)(((uint16_t)*dest) >> 0);
+    uint8_t hi = (uint8_t)(((uint16_t)*dest) >> 8);
+
+    __attribute__((leaf)) asm volatile(
+        "jsr $ffd5"
+        : "+a" (mode), "+x"(lo), "+y"(hi)
+        :
+        : "p"
+        );
+
+    *dest = (void*)(((uint16_t)hi << 8) | (uint16_t)lo);
+    return mode;
+}

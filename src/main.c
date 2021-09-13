@@ -3,7 +3,7 @@
 #include <chrout.h>
 
 #include "interrupt.h"
-#include "dir.h"
+#include "file_selector.h"
 
 uint8_t timer_reg;
 extern void clear_screen(uint8_t* scr);
@@ -12,7 +12,7 @@ extern void run(uint8_t* mem, uint8_t* scr);
 int main ()
 {
     uint8_t mem[4 * 1024 - 16 * 8];
-    selectAndLoadFile();
+    selectAndLoadFile(&(mem[0]));
 
     uint8_t* const scr = (uint8_t*)0xc400;
     uint8_t* const font = (uint8_t*)0xc000;

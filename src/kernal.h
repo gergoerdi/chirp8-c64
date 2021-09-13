@@ -14,3 +14,4 @@ uint8_t k_chrin  ();
 void    k_close  (fd_t fd);
 void    k_clrchn ();
 void    k_ldplot (uint8_t col, uint8_t row);
+uint8_t k_load   (uint8_t loadmode, void** dest);
