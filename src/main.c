@@ -7,10 +7,11 @@
 
 uint8_t timer_reg;
 extern void clear_screen(uint8_t* scr);
-extern void run(uint8_t* scr);
+extern void run(uint8_t* mem, uint8_t* scr);
 
 int main ()
 {
+    uint8_t mem[4 * 1024 - 16 * 8];
     selectAndLoadFile();
 
     uint8_t* const scr = (uint8_t*)0xc400;
@@ -59,7 +60,7 @@ int main ()
     *vicPtr = (*vicPtr & 0xf0) | 0x0 | (*vicPtr & 0x01);
 
     set_frame_irq(&irq);
-    run(scr);
+    run(mem, scr);
 
     return 0;
 }

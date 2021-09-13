@@ -9,11 +9,10 @@ extern "C" {
     static mut timer_reg: u8;
 }
 
-// TODO: get length from file
-const PROG : &[u8; 850] = include_bytes!("../../roms/hidden.ch8");
+const RAMSIZE : usize = 4 * 1024 - 16 * 8;
 
 struct C64 {
-    mem : [Byte; 4 * 1024 - 16 * 8],
+    mem : *mut Byte,
     vmem : [u64; 32],
     scr : *mut u8
 }
@@ -82,20 +81,22 @@ impl Peripherals for C64 {
     }
 
     fn read_ram(&self, addr: Addr) -> Byte {
+        let mem = unsafe { core::slice::from_raw_parts(self.mem, RAMSIZE) };
         let idx = addr as usize;
 
         if idx < FONT_ROM.len() {
             FONT_ROM[idx]
         } else {
-            self.mem[idx - FONT_ROM.len()]
+            mem[idx - FONT_ROM.len()]
         }
     }
 
     fn write_ram(&mut self, addr: Addr, val: Byte) {
+        let mem = unsafe { core::slice::from_raw_parts_mut(self.mem, RAMSIZE) };
         let idx = addr as usize;
 
         if idx >= FONT_ROM.len() {
-            self.mem[idx - FONT_ROM.len()] = val;
+            mem[idx - FONT_ROM.len()] = val;
         }
     }
 
@@ -105,18 +106,12 @@ impl Peripherals for C64 {
 }
 
 #[no_mangle]
-pub extern "C" fn run (scr: *mut u8) {
+pub extern "C" fn run (mem: *mut u8, scr: *mut u8) {
     let mut c64 = C64{
-        mem: [0;4 * 1024 - 16 * 8],
+        mem: mem,
         scr: scr,
         vmem: [0;32]
     };
-
-    let mut addr = 0x0200;
-    for i in 0..PROG.len() {
-        c64.write_ram(addr, PROG[i]);
-        addr += 1;
-    }
 
     let mut cpu = CPU::new();
     loop {
