@@ -1,6 +1,6 @@
 use chip8::prelude::*;
 use chip8::peripherals::*;
-use chip8::machine::Machine;
+use chip8::cpu::CPU;
 
 use video::*;
 use font::*;
@@ -118,8 +118,8 @@ pub extern "C" fn run (scr: *mut u8) {
         addr += 1;
     }
 
-    let mut machine = Machine::new();
+    let mut cpu = CPU::new();
     loop {
-        machine.step(&mut c64);
+        cpu.step(&mut c64);
     }
 }
