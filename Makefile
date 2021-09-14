@@ -26,6 +26,7 @@ OBJS		= \
 
 PRG		= $(OUTDIR)/chirp8.prg
 ROMS		= $(wildcard roms/*.ch8)
+ROM_PRGS	= $(patsubst roms/%, $(OUTDIR)/%, $(ROMS))
 
 .PHONY: all clean cargo
 
@@ -70,7 +71,10 @@ $(OUTDIR)/chirp8.s: cargo $(OBJS)
 	mkdir -p $(OUTDIR)
 	$(CLANG) -Wl,--lto-emit-asm -o $@ $(OBJS) $(wildcard $(RUST_BUILDDIR)/*.bc)
 
-$(OUTDIR)/chirp8.d64: $(PRG) $(ROMS)
+$(OUTDIR)/%.ch8: roms/%.ch8
+	(/usr/bin/printf '%b' '\xff\xff'; cat $<) > $@
+
+$(OUTDIR)/chirp8.d64: $(PRG) $(ROM_PRGS)
 	c1541 -format "chirp-8",8 d64 $@ \
 	  -write $(PRG) $(basename $(notdir $(PRG))) \
-	  $(foreach file,$(ROMS), -write $(file) $(shell echo $(notdir $(file)) | tr [A-Z] [a-z]))
+	  $(foreach file,$(ROM_PRGS), -write $(file) $(shell echo $(notdir $(file)) | tr [A-Z] [a-z]))
