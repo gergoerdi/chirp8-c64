@@ -11,7 +11,7 @@ extern void run(uint8_t* mem, uint8_t* scr);
 
 int main ()
 {
-    uint8_t mem[4 * 1024 - 16 * 8];
+    uint8_t mem[4 * 1024 - 0x200];
     selectAndLoadFile(&(mem[0]));
 
     uint8_t* const scr = (uint8_t*)0xc400;

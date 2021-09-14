@@ -9,7 +9,7 @@ extern "C" {
     static mut timer_reg: u8;
 }
 
-const RAMSIZE : usize = 4 * 1024 - 16 * 8;
+const RAMSIZE : usize = 4 * 1024 - 0x200;
 
 struct C64 {
     mem : *mut Byte,
@@ -86,8 +86,10 @@ impl Peripherals for C64 {
 
         if idx < FONT_ROM.len() {
             FONT_ROM[idx]
+        } else if idx < 0x200 {
+            0
         } else {
-            mem[idx - FONT_ROM.len()]
+            mem[idx - 0x200]
         }
     }
 
@@ -95,8 +97,8 @@ impl Peripherals for C64 {
         let mem = unsafe { core::slice::from_raw_parts_mut(self.mem, RAMSIZE) };
         let idx = addr as usize;
 
-        if idx >= FONT_ROM.len() {
-            mem[idx - FONT_ROM.len()] = val;
+        if idx >= 0x200 {
+            mem[idx - 0x200] = val;
         }
     }
 
