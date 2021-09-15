@@ -6,17 +6,6 @@
 #define SEI() __asm__("sei")
 #define CLI() __asm__("cli")
 
-void set_istop_cb(void (*fun)())
-{
-    SEI();
-
-    uint16_t ptr = (uint16_t)(fun);
-    POKE(0x0328, (uint8_t)(ptr >> 0));
-    POKE(0x0329, (uint8_t)(ptr >> 8));
-
-    CLI();
-}
-
 void set_frame_irq(void (*fun)())
 {
     /* https://www.c64-wiki.com/wiki/Raster_interrupt */
