@@ -6,3 +6,6 @@ pub mod video;
 pub mod font;
 pub mod machine;
 pub mod panic;
+
+mod kernal;
+mod dir;
