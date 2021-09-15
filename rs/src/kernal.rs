@@ -8,9 +8,14 @@ extern {
     pub fn k_close  (fd: u8);
     pub fn k_clrchn ();
     pub fn k_ldplot (col: u8, row: u8);
-    // pub fn k_load   (mode: u8, dest: **const u8) -> u8;
+    pub fn k_load   (mode: u8, dest: &mut *mut u8) -> u8;
 }
 
 extern {
     pub fn __chrout (c: u8);
+}
+
+extern {
+    pub fn start_flash();
+    pub fn end_flash();
 }

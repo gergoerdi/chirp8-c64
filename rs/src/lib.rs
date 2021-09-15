@@ -9,3 +9,4 @@ pub mod panic;
 
 mod kernal;
 mod dir;
+mod file_selector;

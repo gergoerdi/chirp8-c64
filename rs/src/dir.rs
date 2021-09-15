@@ -32,6 +32,7 @@ pub fn close_dir (fd: u8) {
     }
 }
 
+#[derive(Clone,Copy)]
 pub struct Dirent {
     pub d_name: [u8; 16 + 1]
 }
