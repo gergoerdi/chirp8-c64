@@ -23,6 +23,9 @@ pub fn open_dir (fd: u8, dev: u8) {
         get_byte();
         get_byte();
     }
+
+    // Skip first directory entry, since that's just the disk label
+    read_dir();
 }
 
 pub fn close_dir (fd: u8) {

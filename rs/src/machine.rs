@@ -1,3 +1,5 @@
+use core::ptr::{read_volatile};
+
 use chip8::prelude::*;
 use chip8::peripherals::*;
 use chip8::cpu::CPU;
@@ -35,7 +37,7 @@ impl Peripherals for C64 {
     }
 
     fn scan_key_row(&self, row: Byte) -> Byte {
-        let code = unsafe{ *(0x00c5 as *const u8) };
+        let code = get_key();
         match row {
             0 => match code {
                 0x38 => 0b0001,
@@ -119,4 +121,8 @@ pub extern "C" fn run (mem: *mut u8, scr: *mut u8) {
     loop {
         cpu.step(&mut c64);
     }
+}
+
+pub fn get_key () -> u8 {
+    unsafe { read_volatile(0x00c5 as *const u8) }
 }

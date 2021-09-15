@@ -8,15 +8,15 @@
 uint8_t timer_reg;
 extern void clear_screen(uint8_t* scr);
 extern void run(uint8_t* mem, uint8_t* scr);
+extern void select_and_load_file(uint8_t* mem);
 
 void irq();
 
 int main ()
 {
     uint8_t mem[4 * 1024 - 0x200];
-    selectAndLoadFile(&(mem[0]));
+    select_and_load_file(mem);
 
-    uint8_t* const scr = (uint8_t*)0xc400;
     uint8_t* const font = (uint8_t*)0xc000;
 
     /* Create charset */
@@ -40,6 +40,7 @@ int main ()
         }
     }
 
+    uint8_t* const scr = (uint8_t*)0xc400;
     clear_screen(scr);
 
     /* Use 0xc000..0xffff for VIC graphics */
