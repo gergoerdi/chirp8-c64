@@ -1,12 +1,12 @@
 #include <stdint.h>
-#include <stdio.h>
 
 #include "interrupt.h"
 
 uint8_t timer_reg;
+extern void select_and_load_file(uint8_t* mem);
+extern void make_charset();
 extern void clear_screen(uint8_t* scr);
 extern void run(uint8_t* mem, uint8_t* scr);
-extern void select_and_load_file(uint8_t* mem);
 
 void irq();
 extern void print_dir();
@@ -16,29 +16,7 @@ int main ()
     uint8_t mem[4 * 1024 - 0x200];
     select_and_load_file(mem);
 
-    uint8_t* const font = (uint8_t*)0xc000;
-
-    /* Create charset */
-    for (uint8_t i = 0; i < 4; ++i)
-    {
-        for (uint8_t j = 0; j <= 0xf; ++j)
-        {
-            *(font + (j << 3) + i) =
-                (j & 0x1 ? 0x0f : 0x00) |
-                (j & 0x2 ? 0xf0 : 0x00);
-        }
-    }
-
-    for (uint8_t i = 4; i < 8; ++i)
-    {
-        for (uint8_t j = 0; j <= 0xf; ++j)
-        {
-            *(font + (j << 3) + i) =
-                (j & 0x4 ? 0x0f : 0x00) |
-                (j & 0x8 ? 0xf0 : 0x00);
-        }
-    }
-
+    make_charset();
     uint8_t* const scr = (uint8_t*)0xc400;
     clear_screen(scr);
 
@@ -58,7 +36,7 @@ int main ()
     *borderColor = 0x0b;
     *bgColor = 0x00;
 
-    /* Start char font at 0x8000 */
+    /* Start char font at 0xc000 */
     *vicPtr = (*vicPtr & 0xf0) | 0x0 | (*vicPtr & 0x01);
 
     set_frame_irq(&irq);

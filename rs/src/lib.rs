@@ -2,11 +2,12 @@
 
 extern crate chirp8_engine as chip8;
 
-pub mod video;
-pub mod font;
 pub mod machine;
 pub mod panic;
 
+mod video;
+mod font;
 mod kernal;
 mod dir;
 mod file_selector;
+mod charset;
