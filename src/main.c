@@ -1,9 +1,7 @@
 #include <stdint.h>
 #include <stdio.h>
-#include <chrout.h>
 
 #include "interrupt.h"
-#include "file_selector.h"
 
 uint8_t timer_reg;
 extern void clear_screen(uint8_t* scr);
@@ -11,6 +9,7 @@ extern void run(uint8_t* mem, uint8_t* scr);
 extern void select_and_load_file(uint8_t* mem);
 
 void irq();
+extern void print_dir();
 
 int main ()
 {
