@@ -92,13 +92,13 @@ void k_clrchn()
         );
 }
 
-void k_ldplot (uint8_t col, uint8_t row)
+void k_ldplot (uint8_t x,uint8_t y)
 {
     __attribute__((leaf)) asm volatile(
         "clc\n"
         "jsr $fff0"
         :
-        : "x" (col), "y"(row)
+        : "x" (y), "y"(x)
         : "a", "p"
         );
 }
