@@ -9,6 +9,8 @@ uint8_t timer_reg;
 extern void clear_screen(uint8_t* scr);
 extern void run(uint8_t* mem, uint8_t* scr);
 
+void irq();
+
 int main ()
 {
     uint8_t mem[4 * 1024 - 0x200];

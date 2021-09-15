@@ -6,6 +6,10 @@
 #include "load.h"
 #include "c64.h"
 
+uint8_t selectFile(dirent* dirents, uint8_t num_dirents);
+void initSelectorScreen();
+__attribute__((no_isr)) void flashBorder();
+
 const uint8_t window_size = 8;
 
 void selectAndLoadFile(void* dest)
@@ -28,6 +32,7 @@ void selectAndLoadFile(void* dest)
     initSelectorScreen();
     uint8_t selection = selectFile(dirents, num_dirents);
     void* dest_end = dest;
+    set_istop_cb(flashBorder);
     load(8, dirents[selection].d_name, &dest_end);
 }
 
@@ -135,4 +140,10 @@ uint8_t selectFile(dirent* dirents, uint8_t num_dirents)
     redraw:
         ;
     }
+}
+
+__attribute__((no_isr)) void flashBorder()
+{
+    (*border)++;
+    __asm__("jmp 0xf6ed");
 }
