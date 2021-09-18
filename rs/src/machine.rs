@@ -36,38 +36,35 @@ impl Peripherals for C64 {
         draw_screen(self.scr, &self.vmem);
     }
 
-    fn scan_key_row(&self, row: Byte) -> Byte {
+    fn get_keys(&self) -> u16 {
         let code = get_key();
-        match row {
-            0 => match code {
-                0x38 => 0b0001,
-                0x3b => 0b0010,
-                0x08 => 0b0100,
-                0x0b => 0b1000,
-                _    => 0b0000
-            },
-            1 => match code {
-                0x3e => 0b0001,
-                0x09 => 0b0010,
-                0x0e => 0b0100,
-                0x11 => 0b1000,
-                _    => 0b0000
-            },
-            2 => match code {
-                0x0a => 0b0001,
-                0x0d => 0b0010,
-                0x12 => 0b0100,
-                0x15 => 0b1000,
-                _    => 0b0000
-            },
-            3 => match code {
-                0x0c => 0b0001,
-                0x17 => 0b0010,
-                0x14 => 0b0100,
-                0x1f => 0b1000,
-                _    => 0b0000
-            },
-            _ => unreachable!()
+        let key = match code {
+            0x38 => Some(0x1),
+            0x3b => Some(0x2),
+            0x08 => Some(0x3),
+            0x0b => Some(0xc),
+
+            0x3e => Some(0x4),
+            0x09 => Some(0x5),
+            0x0e => Some(0x6),
+            0x11 => Some(0xd),
+
+            0x0a => Some(0x7),
+            0x0d => Some(0x8),
+            0x12 => Some(0x9),
+            0x15 => Some(0xe),
+
+            0x0c => Some(0xa),
+            0x17 => Some(0x0),
+            0x14 => Some(0xb),
+            0x1f => Some(0xf),
+
+            _    => None
+        };
+
+        match key {
+            Some(key) => { 1 << key }
+            _ => { 0 }
         }
     }
 
