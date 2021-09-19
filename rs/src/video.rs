@@ -2,27 +2,27 @@ use chip8::prelude::*;
 
 #[no_mangle]
 pub extern "C" fn clear_screen (scr: *mut u8) {
-    let arr = unsafe { core::slice::from_raw_parts_mut(scr, 1000) };
+    let arr = unsafe { core::slice::from_raw_parts_mut(scr, STRIDE * 25) };
 
-    for i in 0..1000 {
+    for i in 0 .. STRIDE * 25 {
         arr[i] = 0x0f;
     }
 
-    let color_arr = unsafe { core::slice::from_raw_parts_mut(0xd800 as *mut u8, 1000) };
-    for i in 0..1000 {
+    let color_arr = unsafe { core::slice::from_raw_parts_mut(0xd800 as *mut u8, STRIDE * 25) };
+    for i in 0 .. STRIDE * 25 {
         color_arr[i] = 0x0b;
     }
-    for y in 4..4 + 16 {
-        for x in 4..4 + 32 {
-            color_arr[y * 40 + x] = 0x07;
+    for y in 4 .. 4 + 16 {
+        for x in 4 .. 4 + 32 {
+            color_arr[y * STRIDE + x] = 0x07;
         }
     }
 }
 
-const STRIDE : isize = 40;
+const STRIDE : usize = 40;
 
-fn draw_row (scr: *mut u8, rows: &[u8], y: ScreenY) {
-    let mut ptr = unsafe{ scr.offset((4 + (y / 2) as isize) * STRIDE + 4) };
+fn draw_row (scr: &mut [u8], rows: &[u8], y: ScreenY) {
+    let mut ptr = (4 + (y / 2) as usize) * STRIDE + 4;
 
     for i in 0..8 {
         let mut row1 = rows[(y as usize + 0) * 8 + (7 - i)];
@@ -33,13 +33,13 @@ fn draw_row (scr: *mut u8, rows: &[u8], y: ScreenY) {
             let ch = (row1 >> 6) | ((row2 >> 6) << 2);
             row1 <<= 2;
             row2 <<= 2;
-            unsafe { *ptr = ch; };
-            ptr = unsafe{ ptr.offset(1) };
+            scr[ptr] = ch;
+            ptr += 1
         }
     }
 }
 
-pub fn draw_screen (scr: *mut u8, rows: &[u64; 32]) {
+pub fn draw_screen (scr: &mut [u8], rows: &[u64; 32]) {
     let (_, row_bytes, _) = unsafe { rows.align_to::<u8>() };
     for y in (0..32).step_by(2) {
         draw_row(scr, row_bytes, y)

@@ -16,7 +16,7 @@ const RAMSIZE : usize = 4 * 1024 - 0x200;
 struct C64<'a> {
     mem : &'a mut [u8],
     vmem : [u64; 32],
-    scr : *mut u8
+    scr : &'a mut [u8]
 }
 
 impl Peripherals for C64<'_> {
@@ -108,7 +108,7 @@ impl Peripherals for C64<'_> {
 pub extern "C" fn run (mem: *mut u8, scr: *mut u8) {
     let mut c64 = C64{
         mem: unsafe { core::slice::from_raw_parts_mut(mem, RAMSIZE) },
-        scr: scr,
+        scr: unsafe { core::slice::from_raw_parts_mut(scr, 40 * 25) },
         vmem: [0;32]
     };
 
