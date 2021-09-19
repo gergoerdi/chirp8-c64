@@ -13,13 +13,13 @@ extern "C" {
 
 const RAMSIZE : usize = 4 * 1024 - 0x200;
 
-struct C64 {
-    mem : *mut Byte,
+struct C64<'a> {
+    mem : &'a mut [u8],
     vmem : [u64; 32],
     scr : *mut u8
 }
 
-impl Peripherals for C64 {
+impl Peripherals for C64<'_> {
     fn keep_running(&self) -> bool {
         true
     }
@@ -80,7 +80,6 @@ impl Peripherals for C64 {
     }
 
     fn read_ram(&self, addr: Addr) -> Byte {
-        let mem = unsafe { core::slice::from_raw_parts(self.mem, RAMSIZE) };
         let idx = addr as usize;
 
         if idx < FONT_ROM.len() {
@@ -88,16 +87,15 @@ impl Peripherals for C64 {
         } else if idx < 0x200 {
             0
         } else {
-            mem[idx - 0x200]
+            self.mem[idx - 0x200]
         }
     }
 
     fn write_ram(&mut self, addr: Addr, val: Byte) {
-        let mem = unsafe { core::slice::from_raw_parts_mut(self.mem, RAMSIZE) };
         let idx = addr as usize;
 
         if idx >= 0x200 {
-            mem[idx - 0x200] = val;
+            self.mem[idx - 0x200] = val;
         }
     }
 
@@ -109,7 +107,7 @@ impl Peripherals for C64 {
 #[no_mangle]
 pub extern "C" fn run (mem: *mut u8, scr: *mut u8) {
     let mut c64 = C64{
-        mem: mem,
+        mem: unsafe { core::slice::from_raw_parts_mut(mem, RAMSIZE) },
         scr: scr,
         vmem: [0;32]
     };
