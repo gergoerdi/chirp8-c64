@@ -14,7 +14,7 @@ fn get_byte () -> Option<u8> {
 
 pub fn open_dir (fd: u8, dev: u8) {
     unsafe {
-        k_setnam([0x24, 0x00].as_ptr()); // "$" as C-style string
+        k_setnam("$".as_ptr());
         k_setlfs(fd, dev, 0);
         k_open();
         k_chkin(fd);
